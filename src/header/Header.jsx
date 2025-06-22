@@ -2,8 +2,10 @@ import React from 'react';
 import logo from '../assets/images/logo.svg';
 import logomini from '../assets/images/logo-mini.svg';
 import facepic from '../assets/faces/pic-1.png';
+import { useAuth } from '../context/AuthContext';
 
 export default function Header() {
+   let { auth } = useAuth();
   return (
     // <header style={{ width: '100%', background: '#1976d2', color: '#fff', padding: '16px 24px' }}>
        <nav className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
@@ -25,7 +27,7 @@ export default function Header() {
                                     <div className="input-group-prepend bg-transparent">
                                         <i className="input-group-text border-0 mdi mdi-magnify"></i>
                                     </div>
-                                    <input type="text" className="form-control bg-transparent border-0" placeholder="Search projects" />
+                                    <input type="text" className="form-control bg-transparent border-0" placeholder="Search tasks" />
                                 </div>
                             </form>
                         </div>
@@ -37,7 +39,7 @@ export default function Header() {
                                         <span className="availability-status online"></span>
                                     </div>
                                     <div className="nav-profile-text">
-                                        <p className="mb-1 text-black">User </p>
+                                        <p className="mb-1 text-black">{auth.fullName} </p>
                                     </div>
                                 </a>
                                 <div className="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">

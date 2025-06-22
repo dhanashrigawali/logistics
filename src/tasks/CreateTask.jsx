@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import useApi from '../hooks/useFetch.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function CreateTask() {
     const [form, setForm] = useState({
@@ -13,7 +15,8 @@ export default function CreateTask() {
 
     const navigate = useNavigate();
     const { tasks, setTasks } = useContext(AppContext);
-
+    const { loading, error, data, callApi } = useApi();
+    const { auth } = useAuth();
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm((prev) => ({
@@ -28,17 +31,31 @@ export default function CreateTask() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setTasks((prev) => [
-            ...prev,
-            {
-                taskName: form.taskName,
-                taskDesc: form.taskDesc,
-                assignedTo: form.assignedTo,
-                priority: form.priority,
-                createdOn: new Date().toLocaleDateString(),
-                dueDate: form.dueDate // new Date(new Date().setDate(new Date().getDate() + 7)).toLocaleDateString(), // Default due date is 7 days from now
-            },
-        ]);
+        // setTasks((prev) => [
+        //     ...prev,
+        //     {
+        //         taskName: form.taskName,
+        //         taskDesc: form.taskDesc,
+        //         assignedTo: form.assignedTo,
+        //         priority: form.priority,
+        //         createdOn: new Date().toLocaleDateString(),
+        //         dueDate: form.dueDate // new Date(new Date().setDate(new Date().getDate() + 7)).toLocaleDateString(), // Default due date is 7 days from now
+        //     },
+        // ]);
+        const taskData = {
+            "TASK_NO": 1,
+            "CLIENT_ID": "03ed1c9d-8e61-46f4-ab03-894f67ca773f",
+            "USER_ID": "5b116cfe-c171-46bd-a663-cf9d871704f8",
+            "TITLE": form.taskName,
+            "DESCRIPTION": form.taskDesc,
+            "STATUS": "Open",
+            "CREATED_BY": auth.fullName,
+        }
+        async function createTasks() {
+            const result = await callApi({ method: 'POST', url: '/prod/v1/tasks', headers: { 'METHOD': 'CREATE' }, data: form });
+            // setTasks(result);
+        }
+        createTasks();
         navigate('/dashboard/tasks');
     };
 

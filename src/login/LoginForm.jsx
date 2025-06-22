@@ -1,15 +1,32 @@
 import React, { useState } from 'react';
 import logo from '../assets/images/logo.svg';
 import { useNavigate } from 'react-router-dom';
+import useApi from '../hooks/useFetch.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+
+
 
 function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const { loading, error, data, callApi } = useApi();
+    const { setAuth } = useAuth();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        navigate('/dashboard');
+        try {
+            const res = await callApi({
+                method: 'POST',
+                url: '/login',
+                data: { email, password },
+            });
+            setAuth(res); // Save login response in context
+
+            navigate('/dashboard');
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     return (
@@ -52,9 +69,11 @@ function LoginForm() {
                                             type="submit"
                                             className="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn"
                                         >
-                                            SIGN IN
+                                            {loading ? 'Logging in...' : 'Login'}
                                         </button>
                                     </div>
+                                    {error && <div style={{ color: 'red', margin: '10px 0', fontSize: '12px' }}>Login failed</div>}
+
                                     <div className="text-center mt-4 font-weight-light">
                                         Don't have an account?{' '}
                                         <a href="register.html" className="text-primary">

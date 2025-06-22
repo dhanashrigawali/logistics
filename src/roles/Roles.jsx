@@ -1,12 +1,21 @@
-import React, { useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
-
+import useApi from '../hooks/useFetch.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function Roles() {
     const navigate = useNavigate();
     const { roles, setRoles } = useContext(AppContext);
-
+    const { loading, error, data, callApi } = useApi();
+    const { auth } = useAuth();
+    useEffect(() => {
+        async function fetchRoles() {
+            const result = await callApi({ method: 'POST', url: '/prod/v1/roles', headers: { 'METHOD': 'GETALL' } });
+            setRoles(result);
+        }
+        fetchRoles();
+    }, []);
     return (
         <div>
             <div className="main-panel">

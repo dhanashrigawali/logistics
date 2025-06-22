@@ -1,12 +1,20 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
-
+import useApi from '../hooks/useFetch.jsx';
 
 export default function Clients() {
     const navigate = useNavigate();
     const { clients, setClients } = useContext(AppContext);
-
+    const { loading, error, data, callApi } = useApi();
+    
+    useEffect(() => {
+        async function fetchClients() {
+            const result = await callApi({ method: 'POST', url: '/prod/v1/clients', headers: { 'METHOD': 'GETALL' } });
+            setClients(result);
+        }
+        fetchClients();
+    }, []);
     return (
         <div>
             <div className="main-panel">

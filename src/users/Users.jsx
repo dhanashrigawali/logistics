@@ -1,53 +1,19 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
-
-// const users = [
-//     {
-//         fullName: 'Alice Johnson',
-//         phoneNo: '9876543210',
-//         emailId: 'alice@email.com',
-//         role: 'Admin',
-//         clientName: 'Acme Corp',
-//         createdOn: '12 May 2025',
-//     },
-//     {
-//         fullName: 'Bob Smith',
-//         phoneNo: '9123456780',
-//         emailId: 'bob@email.com',
-//         role: 'User',
-//         clientName: 'Beta Ltd',
-//         createdOn: '15 May 2025',
-//     },
-//     {
-//         fullName: 'Charlie Brown',
-//         phoneNo: '9988776655',
-//         emailId: 'charlie@email.com',
-//         role: 'Manager',
-//         clientName: 'Gamma Inc',
-//         createdOn: '14 May 2025',
-//     },
-// ];
-
-// const statusBadge = (status) => {
-//     switch (status) {
-//         case 'Pending':
-//             return <label className="badge badge-danger">Pending</label>;
-//         case 'In progress':
-//             return <label className="badge badge-warning">In progress</label>;
-//         case 'Fixed':
-//             return <label className="badge badge-info">Fixed</label>;
-//         case 'Completed':
-//             return <label className="badge badge-success">Completed</label>;
-//         default:
-//             return <label className="badge badge-secondary">{status}</label>;
-//     }
-// };
+import useApi from '../hooks/useFetch.jsx';
 
 export default function Users() {
     const navigate = useNavigate();
     const { users, setUsers } = useContext(AppContext);
-
+    const { loading, error, data, callApi } = useApi();
+    useEffect(() => {
+        async function fetchUsers() {
+            const result = await callApi({ method: 'POST', url: '/prod/v1/users', headers: { 'METHOD': 'GETALL' } });
+            setUsers(result);
+        }
+        fetchUsers();
+    }, []);
     return (
         <div>
             <div className="main-panel">

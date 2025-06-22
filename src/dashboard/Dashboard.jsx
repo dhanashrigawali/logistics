@@ -4,8 +4,12 @@ import logomini from '../assets/images/logo-mini.svg';
 import facepic from '../assets/faces/pic-1.png';
 import circleimg from '../assets/dashboard/circle.svg';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx';
 
 function Dashboard() {
+    const { auth } = useAuth();
+    if (!auth) return <div>Please log in.</div>;
+    console.log('Dashboard auth:', auth);
     return (
         <div className="container-scroller">
             {/* header Navbar */}
@@ -162,7 +166,7 @@ function Dashboard() {
                                     <div className="card-body">
                                         <img src={circleimg} className="card-img-absolute" alt="circle" />
                                         <h4 className="font-weight-normal mb-3">
-                                            Open Jobs <i className="mdi mdi-bookmark-outline mdi-24px float-right"></i>
+                                            Open Tasks <i className="mdi mdi-bookmark-outline mdi-24px float-right"></i>
                                         </h4>
                                         <h2 className="mb-5">15,0000</h2>
                                     </div>
@@ -173,7 +177,7 @@ function Dashboard() {
                                     <div className="card-body">
                                         <img src={circleimg} className="card-img-absolute" alt="circle" />
                                         <h4 className="font-weight-normal mb-3">
-                                            In Progress Jobs <i className="mdi mdi-chart-line mdi-24px float-right"></i>
+                                            In Progress Tasks <i className="mdi mdi-chart-line mdi-24px float-right"></i>
                                         </h4>
                                         <h2 className="mb-5">45,6334</h2>
                                     </div>
@@ -184,7 +188,7 @@ function Dashboard() {
                                     <div className="card-body">
                                         <img src={circleimg} className="card-img-absolute" alt="circle" />
                                         <h4 className="font-weight-normal mb-3">
-                                            Completed Jobs <i className="mdi mdi-diamond mdi-24px float-right"></i>
+                                            Completed Tasks <i className="mdi mdi-diamond mdi-24px float-right"></i>
                                         </h4>
                                         <h2 className="mb-5">95,5741</h2>
                                     </div>

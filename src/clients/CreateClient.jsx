@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import useApi from '../hooks/useFetch.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function CreateClient() {
     const [form, setForm] = useState({
@@ -10,7 +12,8 @@ export default function CreateClient() {
 
     const navigate = useNavigate();
     const { clients, setClients } = useContext(AppContext);
-
+    const { loading, error, data, callApi } = useApi();
+    const { auth } = useAuth();
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm((prev) => ({
@@ -33,6 +36,16 @@ export default function CreateClient() {
                 createdOn: new Date().toLocaleDateString(),
             },
         ]);
+        const clientData = {
+            CLIENT_NAME: form.clientName,
+            DESCRIPTION: form.description,
+            CREATED_BY: auth.fullName,
+        };
+        async function createClient() {
+            const result = await callApi({ method: 'POST', url: '/prod/v1/clients', headers: { 'METHOD': 'CREATE' }, data: clientData });
+            // setClients(result);
+        }
+        createClient();
         navigate('/dashboard/clients');
     };
 

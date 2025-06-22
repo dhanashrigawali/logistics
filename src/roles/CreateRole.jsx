@@ -1,6 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
+import useApi from '../hooks/useFetch.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+
 
 export default function HorizontalForm() {
   const [form, setForm] = useState({
@@ -8,6 +11,8 @@ export default function HorizontalForm() {
   });
   const { roles, setRoles } = useContext(AppContext);
   const navigate = useNavigate();
+  const { loading, error, data, callApi } = useApi();
+  const { auth } = useAuth();
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -27,6 +32,17 @@ export default function HorizontalForm() {
         createdOn: new Date().toLocaleDateString(),
       },
     ]);
+    const roleData = {
+      ROLE: form.role,
+      description: form.description,
+      createdOn: new Date().toLocaleDateString(),
+      CREATED_BY: auth.fullName, // Assuming auth contains userId
+    };
+    async function createrole() {
+      const result = await callApi({ method: 'POST', url: '/prod/v1/roles', headers: { 'METHOD': 'CREATE' }, data: roleData });
+      // setTasks(result);
+    }
+    createrole();
     navigate('/dashboard/roles');
   };
   const handleCancel = () => {
@@ -77,8 +93,8 @@ export default function HorizontalForm() {
 
                   <div className="row mt-3">
                     <div className="col-md-12 text-end">
-                      <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
-                      <button type="button" class="btn btn-light" onClick={handleCancel}>Cancel</button>
+                      <button type="submit" className="btn btn-gradient-primary me-2">Submit</button>
+                      <button type="button" className="btn btn-light" onClick={handleCancel}>Cancel</button>
                     </div>
                   </div>
                 </form>

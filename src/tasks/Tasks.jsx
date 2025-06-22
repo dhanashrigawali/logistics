@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import useApi from '../hooks/useFetch.jsx';
 
 // const users = [
 //     {
@@ -47,7 +48,15 @@ const statusBadge = (status) => {
 export default function Tasks() {
   const navigate = useNavigate();
   const { tasks, setTasks } = useContext(AppContext);
+  const { loading, error, data, callApi } = useApi();
 
+  useEffect(() => {
+    async function fetchTasks() {
+      const result = await callApi({ method: 'POST', url: '/prod/v1/tasks' , headers: { 'METHOD': 'GETALL' } });
+      setTasks(result);
+    }
+    fetchTasks();
+  }, []);
   const handleDelete = (index) => {
     const updatedTasks = tasks.filter((_, idx) => idx !== index);
     setTasks(updatedTasks);
@@ -100,7 +109,7 @@ export default function Tasks() {
                           <td>{task.createdOn}</td>
                           <td>
                             <i className="mdi mdi-pencil" style={{ cursor: 'pointer', color: '#2196f3' }}></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <i className="mdi mdi-delete" style={{ cursor: 'pointer', color: '#f44336' }}   onClick={() => handleDelete(idx)}></i>
+                            <i className="mdi mdi-delete" style={{ cursor: 'pointer', color: '#f44336' }} onClick={() => handleDelete(idx)}></i>
                           </td>
                         </tr>
                       ))}
